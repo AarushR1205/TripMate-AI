@@ -1,0 +1,30 @@
+# --- AI / Multi-Agent Framework ---
+langgraph
+langchain
+langchain-groq
+langchain-openrouter
+langchain-tavily
+
+# --- PostgreSQL ---
+psycopg[binary]
+langchain-postgres
+langgraph-checkpoint-postgres
+
+# --- Travel Data ---
+airportsdata
+pycountry
+
+# --- Configuration ---
+python-dotenv
+
+# --- API / Web Server ---
+fastapi[standard]
+pydantic
+httpx
+requests
+
+# --- Data Processing ---
+python-dateutil
+
+# --- Utilities ---
+tenacity
