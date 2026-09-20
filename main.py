@@ -108,11 +108,11 @@ def travel_chat(request: TravelRequest):
         raise HTTPException(
             status_code=400,
             detail=str(exc),
-        ) from exc
+        ) 
 
     except Exception as exc:
         print(f"[TripMate AI ERROR] {type(exc).__name__}: {exc}")
         raise HTTPException(
             status_code=500,
             detail=(f"TripMate AI could not process your request. Error: {str(exc)}"),
-        ) from exc
+        ) 
