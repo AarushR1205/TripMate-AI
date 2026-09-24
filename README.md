@@ -177,6 +177,10 @@ Check `AVIATIONSTACK_API_KEY` and try recognizable city or airport names. Result
 
 Confirm that Uvicorn is running on port `8000` and open the application through <http://127.0.0.1:8000/> rather than as a local HTML file.
 
+
+## Video Demo
+<video src="https://drive.google.com/file/d/1JkLXrk8Etanu49V32jj68mgZa38PepfO/view?usp=drive_link" controls></video>
+
 ## Development Notes
 
 The repository currently has no automated tests. Before production use, add tests for request validation, airport and route parsing, mocked provider responses, and the `/api/chat` workflow.
