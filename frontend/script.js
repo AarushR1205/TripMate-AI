@@ -144,10 +144,66 @@ function renderMarkdown(text) {
     }
 
     if (typeof marked !== "undefined") {
-        return marked.parse(text);
+        const rendered = marked.parse(text, {
+            breaks: true,
+            gfm: true
+        });
+
+        return typeof DOMPurify !== "undefined"
+            ? DOMPurify.sanitize(rendered)
+            : rendered;
     }
 
-    return escapeHtml(text).replace(/\n/g, "<br>");
+    return renderPlainMarkdown(text);
+}
+
+function renderPlainMarkdown(text) {
+    const lines = text.split(/\r?\n/);
+    const renderedLines = [];
+    let listType = null;
+
+    const closeList = () => {
+        if (listType) {
+            renderedLines.push(`</${listType}>`);
+            listType = null;
+        }
+    };
+
+    lines.forEach(line => {
+        const heading = line.match(/^#{1,4}\s+(.+)$/);
+        const bullet = line.match(/^\s*[-*+]\s+(.+)$/);
+        const numbered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+
+        if (heading) {
+            closeList();
+            const level = line.match(/^#+/)[0].length;
+            renderedLines.push(`<h${level}>${formatInlineMarkdown(heading[1])}</h${level}>`);
+        } else if (bullet || numbered) {
+            const nextListType = bullet ? "ul" : "ol";
+            if (listType !== nextListType) {
+                closeList();
+                renderedLines.push(`<${nextListType}>`);
+                listType = nextListType;
+            }
+            renderedLines.push(`<li>${formatInlineMarkdown((bullet || numbered)[1])}</li>`);
+        } else if (line.trim()) {
+            closeList();
+            renderedLines.push(`<p>${formatInlineMarkdown(line)}</p>`);
+        } else {
+            closeList();
+        }
+    });
+
+    closeList();
+    return renderedLines.join("");
+}
+
+function formatInlineMarkdown(text) {
+    return escapeHtml(text)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/__(.+?)__/g, "<strong>$1</strong>")
+        .replace(/\*([^*\n]+)\*/g, "<em>$1</em>")
+        .replace(/_([^_\n]+)_/g, "<em>$1</em>");
 }
 
 function escapeHtml(text) {
