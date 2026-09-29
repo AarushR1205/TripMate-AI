@@ -1,4 +1,3 @@
-from pathlib import Path
 import uuid
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,10 +5,6 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from backend import run_travel_agent
-
-BASE_DIR = Path(__file__).resolve().parent
-FRONTEND_DIR = BASE_DIR / "frontend"
-INDEX_FILE = FRONTEND_DIR / "index.html"
 
 app = FastAPI(
     title="TripMate AI",
@@ -19,21 +14,15 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://tripmate-ai-i1eh.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-if not FRONTEND_DIR.exists():
-    raise RuntimeError(f"Frontend directory not found: {FRONTEND_DIR}")
-
-if not INDEX_FILE.exists():
-    raise RuntimeError(f"Frontend index.html not found: {INDEX_FILE}")
-
 app.mount(
     "/frontend",
-    StaticFiles(directory=FRONTEND_DIR),
+    StaticFiles(directory="frontend"),
     name="frontend",
 )
 
@@ -53,7 +42,7 @@ class TravelResponse(BaseModel):
 
 @app.get("/")
 def root():
-    return FileResponse(INDEX_FILE)
+    return FileResponse("./frontend/index.html")
 
 @app.get("/health")
 def health():
