@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from backend import run_travel_agent
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "https://tripmate-ai-i1eh.onrender.com")
+FRONTEND_URL = "https://tripmate-ai-ck6p.onrender.com/"
 
 app = FastAPI(
     title="TripMate AI",
