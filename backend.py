@@ -154,7 +154,7 @@ _conn = psycopg.connect(
 checkpointer = PostgresSaver(_conn)
 checkpointer.setup()
 
-travel_graph = graph.compile()
+travel_graph = graph.compile(checkpointer=checkpointer)
 
 
 def run_travel_agent(user_input: str, thread_id: str | None=None):
