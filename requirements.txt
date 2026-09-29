@@ -4,6 +4,7 @@ langchain
 langchain-groq
 langchain-openrouter
 langchain-tavily
+tavily
 
 # --- PostgreSQL ---
 psycopg[binary]
