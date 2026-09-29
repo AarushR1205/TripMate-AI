@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://tripmate-ai-backend.onrender.com";
 
 const travelForm = document.getElementById("travelForm");
 const travelInput = document.getElementById("travelInput");
@@ -30,7 +30,6 @@ async function initialize() {
 async function createNewSession() {
     try {
         const response = await fetch(`${API_BASE}/api/new-session`);
-
         if (!response.ok) {
             throw new Error("Unable to create a new session.");
         }
