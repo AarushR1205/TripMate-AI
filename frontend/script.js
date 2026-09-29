@@ -1,4 +1,4 @@
-const API_BASE = "https://tripmate-ai-backend.onrender.com/";
+const API_BASE = "";
 
 const travelForm = document.getElementById("travelForm");
 const travelInput = document.getElementById("travelInput");
