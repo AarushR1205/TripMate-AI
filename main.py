@@ -1,10 +1,14 @@
+from pathlib import Path
 import uuid
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from backend import run_travel_agent
 
-FRONTEND_URL = "https://tripmate-ai-ck6p.onrender.com/"
+BASE_DIR = Path(__file__).resolve().parent
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 app = FastAPI(
     title="TripMate AI",
@@ -14,10 +18,16 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL],
-    allow_credentials=False,
+    allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.mount(
+    "/frontend",
+    StaticFiles(directory=FRONTEND_DIR),
+    name="frontend"
 )
 
 class TravelRequest(BaseModel):
@@ -35,7 +45,7 @@ class TravelResponse(BaseModel):
 
 @app.get("/")
 def root():
-    return api_info()
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 @app.get("/health")
 def health():
@@ -52,7 +62,6 @@ def api_info():
         "version": "1.0.0",
         "status": "running",
         "endpoints": {
-            "frontend": FRONTEND_URL,
             "chat": "/api/chat",
             "new_session": "/api/new-session",
             "health": "/health",

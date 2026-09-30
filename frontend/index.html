@@ -1,505 +1,180 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>TripMate AI — AI Travel Planner</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f7f2" />
+    <title>TripMate AI | Plan a trip that feels like yours</title>
+    <meta name="description" content="Build a thoughtful travel plan with live flight research, stays, and a day-by-day itinerary." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["DM Sans", "sans-serif"],
+              display: ["Manrope", "sans-serif"],
+            },
+            colors: {
+              ink: "#18332e",
+              moss: "#31594d",
+              paper: "#f6f7f2",
+              lime: "#d8ee82",
+              coral: "#e98366",
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <style>
-        body {
-            font-family: "Inter", sans-serif;
-            background-color: #f8fafc;
-        }
-
-        .hero-gradient {
-            background:
-                radial-gradient(circle at 15% 20%, rgba(13, 110, 253, 0.10), transparent 30%),
-                radial-gradient(circle at 85% 25%, rgba(111, 66, 193, 0.10), transparent 30%),
-                #f8fafc;
-        }
-
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 6vw, 4.8rem);
-            letter-spacing: -0.05em;
-        }
-
-        .gradient-text {
-            background: linear-gradient(90deg, #0d6efd, #6f42c1);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .planner-card {
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
-        }
-
-        .planner-card:focus-within {
-            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.10) !important;
-            transform: translateY(-2px);
-        }
-
-        .planner-textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-
-        .feature-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.07) !important;
-        }
-
-        .research-content {
-            max-height: 220px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-
-        .research-content::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .research-content::-webkit-scrollbar-thumb {
-            background: #ced4da;
-            border-radius: 10px;
-        }
-
-        .ai-answer {
-            line-height: 1.8;
-        }
-
-        .ai-answer h1,
-        .ai-answer h2,
-        .ai-answer h3,
-        .ai-answer h4 {
-            color: #212529;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            font-weight: 700;
-        }
-
-        .ai-answer h1:first-child,
-        .ai-answer h2:first-child,
-        .ai-answer h3:first-child,
-        .ai-answer h4:first-child {
-            margin-top: 0;
-        }
-
-        .ai-answer p,
-        .ai-answer ul,
-        .ai-answer ol {
-            margin-bottom: 1rem;
-        }
-
-        .ai-answer li + li {
-            margin-top: 0.35rem;
-        }
-
-        .research-content h1,
-        .research-content h2,
-        .research-content h3,
-        .research-content h4 {
-            color: #212529;
-            font-size: 0.95rem;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .research-content p,
-        .research-content ul,
-        .research-content ol {
-            margin-bottom: 0.75rem;
-        }
-
-        .research-content li + li {
-            margin-top: 0.25rem;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-        }
-
-        .quick-prompt {
-            transition: all 0.2s ease;
-        }
-
-        .quick-prompt:hover {
-            transform: translateY(-2px);
-        }
-
-        .footer {
-            background: #fff;
-        }
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body { font-family: "DM Sans", sans-serif; background: #f6f7f2; color: #18332e; }
+      button, textarea { font: inherit; }
+      .paper-grain { background-image: radial-gradient(#31594d0b .7px, transparent .7px); background-size: 8px 8px; }
+      .destination-image { transition: transform .55s cubic-bezier(.2,.7,.2,1); }
+      .destination-card:hover .destination-image { transform: scale(1.045); }
+      .prompt-chip { border: 1px solid #e4e8df; border-radius: 999px; background: #fbfcf8; padding: 6px 11px; color: #52665b; font-size: 11px; font-weight: 600; transition: border-color .2s, background-color .2s, color .2s; }
+      .prompt-chip:hover, .prompt-chip:focus-visible { border-color: #9bac8e; background: #edf3e9; color: #18332e; outline: none; }
+      .fade-up { animation: fade-up .55s ease both; }
+      @keyframes fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .prose-trip h2 { font-family: Manrope, sans-serif; font-size: 1.17rem; font-weight: 800; color: #18332e; margin: 1.7rem 0 .65rem; }
+      .prose-trip h3 { font-family: Manrope, sans-serif; font-size: 1rem; font-weight: 800; color: #31594d; margin: 1.35rem 0 .45rem; }
+      .prose-trip p { line-height: 1.75; margin: .55rem 0; }
+      .prose-trip ul, .prose-trip ol { padding-left: 1.35rem; margin: .65rem 0; }
+      .prose-trip li { padding: .16rem 0; line-height: 1.7; }
+      .prose-trip ul { list-style: disc; }
+      .prose-trip ol { list-style: decimal; }
+      .prose-trip strong { color: #18332e; }
+      .prose-trip a { color: #31594d; text-decoration: underline; text-underline-offset: 3px; }
+      .prose-trip hr { border: 0; border-top: 1px solid #e8ebe4; margin: 1.3rem 0; }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
     </style>
-</head>
+  </head>
+  <body class="min-h-screen antialiased">
+    <div class="min-h-screen lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
+      <aside class="hidden min-h-screen flex-col border-r border-[#e7eae2] bg-[#fbfcf8] px-5 py-6 lg:flex">
+        <a href="/" class="flex items-center gap-3" aria-label="TripMate home">
+          <span class="grid h-10 w-10 place-items-center rounded-[14px] bg-ink text-lime"><i data-lucide="map" class="h-5 w-5"></i></span>
+          <span class="font-display text-[17px] font-extrabold tracking-normal">tripmate<span class="text-coral">.</span></span>
+        </a>
 
-<body>
+        <button id="new-trip" class="mt-10 flex h-11 items-center justify-center gap-2 rounded-xl bg-ink px-4 text-sm font-semibold text-white transition hover:bg-moss focus:outline-none focus:ring-2 focus:ring-moss focus:ring-offset-2">
+          <i data-lucide="plus" class="h-4 w-4"></i> Plan a new trip
+        </button>
 
-    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
-        <div class="container py-2">
-            <a href="/" class="navbar-brand d-flex align-items-center gap-2 fw-bold">
-                <span
-                    class="brand-icon d-flex align-items-center justify-content-center bg-primary text-white rounded-3 shadow-sm">
-                    <i class="bi bi-compass fs-5"></i>
-                </span>
-
-                <span class="fs-5">
-                    TripMate
-                    <span class="text-primary">AI</span>
-                </span>
-            </a>
-
-            <div class="d-flex align-items-center gap-3">
-                <div class="d-none d-md-flex align-items-center gap-2">
-                    <span class="status-dot bg-success rounded-circle"></span>
-                    <span class="text-secondary small fw-medium">AI Online</span>
-                </div>
-
-                <button id="newTripBtn" class="btn btn-dark rounded-pill px-3">
-                    <i class="bi bi-plus-lg me-1"></i>
-                    New Trip
-                </button>
-            </div>
+        <div class="mt-10">
+          <p class="px-2 text-[10px] font-bold uppercase tracking-normal text-[#929c94]">Your workspace</p>
+          <button class="mt-3 flex w-full items-center gap-3 rounded-lg bg-[#eef2e9] px-3 py-2.5 text-left text-sm font-semibold text-ink">
+            <i data-lucide="sparkles" class="h-4 w-4 text-moss"></i> Trip planner
+          </button>
         </div>
-    </nav>
 
-    <section class="hero-gradient py-5">
-        <div class="container py-lg-5">
-            <div class="row justify-content-center">
-                <div class="col-xl-9 col-lg-10 text-center">
-                    <div
-                        class="d-inline-flex align-items-center gap-1 bg-white border rounded-pill px-3 py-2 shadow-sm mb-4">
-                        <i class="bi bi-stars text-primary"></i>
-                        <span class="small fw-semibold text-primary">
-                            AI-powered travel planning
-                        </span>
-                    </div>
-
-                    <h1 class="hero-title fw-bold lh-1 mb-4">
-                        Plan your next
-                        <span class="gradient-text">adventure.</span>
-                    </h1>
-
-                    <p class="lead text-secondary mx-auto mb-0" style="max-width: 700px;">
-                        Tell TripMate where you want to go,
-                        when you're travelling and what you're
-                        looking for.
-
-                        Our AI agents will research flights,
-                        hotels and build a personalized itinerary.
-                    </p>
-                </div>
-            </div>
-
-            <div class="row justify-content-center mt-5">
-                <div class="col-xl-9 col-lg-10">
-                    <div class="planner-card bg-white border rounded-4 shadow-lg p-2">
-                        <form id="travelForm">
-                            <div class="p-2">
-                                <textarea id="travelInput"
-                                    class="form-control border-0 shadow-none planner-textarea p-3" maxlength="8000"
-                                    rows="5"
-                                    placeholder="Example: Plan a 5-day trip to Tokyo from Delhi in October. I want affordable flights, a good hotel and a day-by-day itinerary."
-                                    required></textarea>
-                            </div>
-
-                            <div
-                                class="border-top d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 p-3">
-                                <div class="small text-secondary">
-                                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i>
-                                    AI-powered travel research
-                                </div>
-
-                                <div class="d-flex align-items-center gap-3 w-100 w-md-auto">
-                                    <span id="charCount" class="small text-secondary">
-                                        0 / 8000
-                                    </span>
-
-                                    <button id="planBtn" type="submit"
-                                        class="btn btn-primary rounded-pill px-4 fw-semibold ms-auto">
-                                        <span id="planBtnText">Plan my trip</span>
-                                        <i id="planBtnIcon" class="bi bi-arrow-right ms-2"></i>
-                                        <span id="planSpinner"
-                                            class="spinner-border spinner-border-sm ms-2 d-none"></span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row justify-content-center mt-4">
-                <div class="col-xl-9 col-lg-10">
-                    <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
-                        <span class="small text-secondary me-1">Try:</span>
-
-                        <button class="quick-prompt btn btn-sm btn-light border rounded-pill"
-                            data-prompt="Plan a 5-day budget trip to Tokyo from Delhi with flights, hotels and a day-by-day itinerary.">
-                            <i class="bi bi-buildings me-1"></i>
-                            Tokyo
-                        </button>
-
-                        <button class="quick-prompt btn btn-sm btn-light border rounded-pill"
-                            data-prompt="Plan a 4-day trip to Dubai from Delhi with affordable flights, a good hotel and major attractions.">
-                            <i class="bi bi-buildings me-1"></i>
-                            Dubai
-                        </button>
-
-                        <button class="quick-prompt btn btn-sm btn-light border rounded-pill"
-                            data-prompt="Plan a romantic 6-day trip to Paris including flights, hotels, restaurants and attractions.">
-                            <i class="bi bi-heart me-1"></i>
-                            Paris
-                        </button>
-
-                        <button class="quick-prompt btn btn-sm btn-light border rounded-pill"
-                            data-prompt="Plan a 7-day Switzerland trip with scenic destinations, hotels, transport and a complete itinerary.">
-                            <i class="bi bi-mountains me-1"></i>
-                            Switzerland
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div class="mt-auto rounded-2xl bg-[#edf2e6] p-4">
+          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-lime text-ink"><i data-lucide="compass" class="h-4 w-4"></i></div>
+          <p class="mt-3 font-display text-sm font-bold">Good trips start with a feeling.</p>
+          <p class="mt-1 text-xs leading-5 text-[#61736a]">Tell us what you love. We’ll take care of the details.</p>
         </div>
-    </section>
+        <div class="mt-5 flex items-center gap-2 px-1 text-[11px] text-[#87928b]"><span class="h-1.5 w-1.5 rounded-full bg-[#78a77a]"></span> Travel research, thoughtfully done</div>
+      </aside>
 
-    <div class="container">
-        <div id="errorBox" class="alert alert-danger d-none border-0 rounded-4 shadow-sm mt-4" role="alert">
-            <div class="d-flex gap-3">
-                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+      <main class="paper-grain relative flex min-h-screen min-w-0 flex-col">
+        <header class="sticky top-0 z-20 flex h-[68px] items-center justify-between border-b border-[#e7eae2] bg-paper/90 px-4 backdrop-blur-md sm:px-8 lg:px-12">
+          <div class="flex items-center gap-3 lg:hidden">
+            <span class="grid h-9 w-9 place-items-center rounded-xl bg-ink text-lime"><i data-lucide="map" class="h-[18px] w-[18px]"></i></span>
+            <span class="font-display text-base font-extrabold">tripmate<span class="text-coral">.</span></span>
+          </div>
+          <div class="hidden items-center gap-2 text-xs text-[#7c8981] sm:flex"><i data-lucide="globe-2" class="h-4 w-4"></i> Your next chapter starts here</div>
+          <button id="mobile-new-trip" class="flex h-9 items-center gap-2 rounded-lg border border-[#dfe4db] bg-white px-3 text-xs font-semibold text-ink transition hover:border-moss lg:hidden"><i data-lucide="plus" class="h-4 w-4"></i> New trip</button>
+          <div class="hidden items-center gap-2 text-xs font-medium text-[#69786f] lg:flex"><span class="h-2 w-2 rounded-full bg-[#7cab73]"></span><span id="session-status">Ready when you are</span></div>
+        </header>
 
-                <div>
-                    <strong>Something went wrong.</strong>
-                    <div id="errorMessage" class="small mt-1"></div>
-                </div>
+        <div class="mx-auto flex w-full max-w-[1160px] flex-1 flex-col px-4 pb-12 pt-9 sm:px-8 sm:pt-12 lg:px-12">
+          <section id="welcome" class="fade-up">
+            <div class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-normal text-moss"><span class="h-px w-6 bg-coral"></span> A better way to get away</div>
+            <div class="mt-4 grid gap-7 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-end">
+              <div>
+                <h1 class="max-w-[740px] font-display text-[clamp(2.45rem,5vw,4.35rem)] font-extrabold leading-[1.06] tracking-normal text-ink">Somewhere new<br class="hidden sm:block" /> is calling<span class="text-coral">.</span></h1>
+                <p class="mt-4 max-w-xl text-sm leading-6 text-[#6e7c73] sm:text-[15px]">Flights, stays, and a day-by-day plan, shaped around the way you want to travel.</p>
+              </div>
+              <div class="hidden items-center gap-3 border-l border-[#dfe4db] pb-1 pl-5 lg:flex">
+                <div class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-lime/70 text-ink"><i data-lucide="heart-handshake" class="h-[18px] w-[18px]"></i></div>
+                <p class="text-xs leading-5 text-[#64746b]">Personal ideas.<br /><span class="font-semibold text-ink">Practical plans.</span></p>
+              </div>
             </div>
+
+            <div class="mt-8 rounded-[20px] border border-[#e2e7dd] bg-white p-2 shadow-[0_12px_40px_-30px_rgba(24,51,46,.35)] sm:p-2.5">
+              <form id="travel-form">
+                <label class="sr-only" for="travel-prompt">Describe the trip you want to plan</label>
+                <textarea id="travel-prompt" rows="2" maxlength="8000" placeholder="A long weekend in Kyoto, great food, quiet neighborhoods, under $1,500..." class="block min-h-[78px] w-full resize-y border-0 bg-transparent px-3 py-3 text-sm leading-6 text-ink outline-none placeholder:text-[#a1aaa2] focus:ring-0 sm:px-4" required></textarea>
+                <div class="flex flex-wrap items-center justify-between gap-2 border-t border-[#eef0eb] px-2 pt-2 sm:px-3">
+                  <div class="flex items-center gap-1.5 text-[11px] text-[#829087]"><i data-lucide="wand-sparkles" class="h-3.5 w-3.5 text-coral"></i> Flights · stays · itinerary</div>
+                  <button id="submit-button" type="submit" class="inline-flex h-10 items-center gap-2 rounded-xl bg-ink px-4 text-xs font-bold text-white transition hover:bg-moss focus:outline-none focus:ring-2 focus:ring-moss focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60">
+                    <span id="submit-label">Make it a trip</span><i data-lucide="arrow-up-right" class="h-4 w-4"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-2">
+              <span class="mr-1 text-[11px] font-medium text-[#8b968e]">Try</span>
+              <button class="prompt-chip" data-prompt="Plan a 5-day trip to Tokyo for two people. We love design, great food, and hidden local spots.">Tokyo, for the food</button>
+              <button class="prompt-chip" data-prompt="Plan a relaxing 4-day beach trip to Bali with boutique stays and a moderate budget.">A slower Bali</button>
+              <button class="prompt-chip" data-prompt="Plan a 7-day trip to Italy covering Rome and Florence, with history, great food, and train travel.">Italy by train</button>
+            </div>
+          </section>
+
+          <section id="results" class="mt-8 hidden" aria-live="polite"></section>
+
+          <section id="inspiration" class="mt-12 fade-up [animation-delay:120ms]">
+            <div class="flex items-end justify-between gap-3">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-normal text-coral">A little inspiration</p>
+                <h2 class="mt-1.5 font-display text-xl font-extrabold tracking-normal text-ink">Popular places to begin</h2>
+              </div>
+              <span class="hidden text-xs text-[#89948c] sm:block">Pick a place. We’ll help with the rest.</span>
+            </div>
+            <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+              <button class="destination-card group relative h-[170px] overflow-hidden rounded-2xl bg-[#d8ddd5] text-left sm:h-[205px]" data-prompt="Plan a 5-day trip to Kyoto, Japan for two people. Include temples, beautiful gardens, local food, and a mix of popular and quieter places.">
+                <img class="destination-image absolute inset-0 h-full w-full object-cover" src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=650&q=80" alt="Traditional street in Kyoto" loading="lazy" />
+                <span class="absolute inset-0 bg-gradient-to-t from-[#10211e]/75 via-[#10211e]/5 to-transparent"></span>
+                <span class="absolute bottom-3.5 left-3.5 text-white"><span class="block font-display text-base font-bold">Kyoto</span><span class="mt-0.5 block text-[10px] text-white/80">Temples & little lanes</span></span>
+                <span class="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-ink opacity-0 transition group-hover:opacity-100"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></span>
+              </button>
+              <button class="destination-card group relative h-[170px] overflow-hidden rounded-2xl bg-[#d8ddd5] text-left sm:h-[205px]" data-prompt="Plan a 5-day trip to Lisbon, Portugal for two. Include neighborhood walks, local seafood and pastries, viewpoints, and a relaxed day trip option.">
+                <img class="destination-image absolute inset-0 h-full w-full object-cover" src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=650&q=80" alt="Colorful Lisbon rooftops" loading="lazy" />
+                <span class="absolute inset-0 bg-gradient-to-t from-[#10211e]/75 via-[#10211e]/5 to-transparent"></span>
+                <span class="absolute bottom-3.5 left-3.5 text-white"><span class="block font-display text-base font-bold">Lisbon</span><span class="mt-0.5 block text-[10px] text-white/80">Sunshine & slow lunches</span></span>
+                <span class="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-ink opacity-0 transition group-hover:opacity-100"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></span>
+              </button>
+              <button class="destination-card group relative h-[170px] overflow-hidden rounded-2xl bg-[#d8ddd5] text-left sm:h-[205px]" data-prompt="Plan a 6-day trip to Marrakech, Morocco with colorful souks, beautiful architecture, excellent food, and one peaceful day trip outside the city.">
+                <img class="destination-image absolute inset-0 h-full w-full object-cover" src="https://images.unsplash.com/photo-1539020140153-e479b8c22e70?auto=format&fit=crop&w=650&q=80" alt="Marrakech market and architecture" loading="lazy" />
+                <span class="absolute inset-0 bg-gradient-to-t from-[#10211e]/75 via-[#10211e]/5 to-transparent"></span>
+                <span class="absolute bottom-3.5 left-3.5 text-white"><span class="block font-display text-base font-bold">Marrakech</span><span class="mt-0.5 block text-[10px] text-white/80">Color & discovery</span></span>
+                <span class="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-ink opacity-0 transition group-hover:opacity-100"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></span>
+              </button>
+              <button class="destination-card group relative h-[170px] overflow-hidden rounded-2xl bg-[#d8ddd5] text-left sm:h-[205px]" data-prompt="Plan a 6-day trip to the Dolomites in Italy for two people who enjoy scenic hikes, mountain food, and comfortable stays. Include transport tips and a moderate budget.">
+                <img class="destination-image absolute inset-0 h-full w-full object-cover" src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=650&q=80" alt="Mountain peaks beneath a starry sky" loading="lazy" />
+                <span class="absolute inset-0 bg-gradient-to-t from-[#10211e]/75 via-[#10211e]/5 to-transparent"></span>
+                <span class="absolute bottom-3.5 left-3.5 text-white"><span class="block font-display text-base font-bold">The Dolomites</span><span class="mt-0.5 block text-[10px] text-white/80">Big views, fresh air</span></span>
+                <span class="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-ink opacity-0 transition group-hover:opacity-100"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></span>
+              </button>
+            </div>
+          </section>
+
+          <footer class="mt-auto flex flex-col gap-2 border-t border-[#e6e9e2] pt-5 text-[10px] leading-5 text-[#929c94] sm:mt-12 sm:flex-row sm:items-center sm:justify-between">
+            <span>Made for the trips you’ll talk about later.</span>
+            <span>Flight availability and prices may change.</span>
+          </footer>
         </div>
+      </main>
     </div>
 
-    <section id="resultsSection" class="d-none py-5">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm rounded-4 h-100">
-                        <div class="card-body p-4 p-lg-5">
-                            <div class="d-flex align-items-start justify-content-between gap-3">
-                                <div>
-                                    <span class="badge bg-primary-subtle text-primary rounded-pill mb-2">
-                                        AI TRAVEL PLAN
-                                    </span>
-
-                                    <h2 class="h4 fw-bold mb-0">
-                                        Your personalized trip
-                                    </h2>
-                                </div>
-
-                                <button id="copyBtn" class="btn btn-outline-secondary btn-sm rounded-pill">
-                                    <i class="bi bi-copy me-1"></i>
-                                    Copy
-                                </button>
-                            </div>
-
-                            <hr class="my-4">
-
-                            <div id="aiAnswer" class="ai-answer text-secondary"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center"
-                                    style="width: 45px; height: 45px;">
-                                    <i class="bi bi-search fs-5"></i>
-                                </div>
-
-                                <div>
-                                    <span class="badge bg-primary-subtle text-primary rounded-pill">
-                                        LIVE RESEARCH
-                                    </span>
-
-                                    <h3 class="h6 fw-bold mt-1 mb-0">
-                                        Travel intelligence
-                                    </h3>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="border-top p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="fw-semibold small">
-                                    <i class="bi bi-airplane text-primary me-2"></i>
-                                    Flights
-                                </span>
-
-                                <span class="badge text-bg-light">AI Search</span>
-                            </div>
-
-                            <div id="flightResults" class="research-content small text-secondary">
-                                No flight information available.
-                            </div>
-                        </div>
-
-                        <div class="border-top p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="fw-semibold small">
-                                    <i class="bi bi-building text-primary me-2"></i>
-                                    Hotels
-                                </span>
-
-                                <span class="badge text-bg-light">AI Search</span>
-                            </div>
-
-                            <div id="hotelResults" class="research-content small text-secondary">
-                                No hotel information available.
-                            </div>
-                        </div>
-
-                        <div class="border-top p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="fw-semibold small">
-                                    <i class="bi bi-calendar-check text-primary me-2"></i>
-                                    Itinerary
-                                </span>
-
-                                <span class="badge text-bg-light">AI Generated</span>
-                            </div>
-
-                            <div id="itineraryResults" class="research-content small text-secondary">
-                                Your itinerary will appear here.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="bg-white border-top py-5">
-        <div class="container py-lg-5">
-            <div class="text-center mx-auto mb-5" style="max-width: 700px;">
-                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-                    HOW IT WORKS
-                </span>
-
-                <h2 class="display-6 fw-bold mt-3">
-                    Your travel planning,
-                    <span class="text-primary">automated.</span>
-                </h2>
-
-                <p class="text-secondary mt-3">
-                    TripMate combines AI agents and travel
-                    research tools to turn a simple request
-                    into a complete travel plan.
-                </p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature-card card border-0 bg-light rounded-4 h-100">
-                        <div class="card-body p-4">
-                            <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center mb-4"
-                                style="width: 50px; height: 50px;">
-                                <i class="bi bi-search fs-5"></i>
-                            </div>
-
-                            <h3 class="h5 fw-bold">Smart Research</h3>
-
-                            <p class="text-secondary small lh-lg mb-0">
-                                TripMate searches the web for
-                                relevant travel information instead
-                                of relying only on static data.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="feature-card card border-0 bg-light rounded-4 h-100">
-                        <div class="card-body p-4">
-                            <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center mb-4"
-                                style="width: 50px; height: 50px;">
-                                <i class="bi bi-airplane fs-5"></i>
-                            </div>
-
-                            <h3 class="h5 fw-bold">Flight Intelligence</h3>
-
-                            <p class="text-secondary small lh-lg mb-0">
-                                Get flight information and travel
-                                insights tailored to your destination
-                                and requirements.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="feature-card card border-0 bg-light rounded-4 h-100">
-                        <div class="card-body p-4">
-                            <div class="bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center mb-4"
-                                style="width: 50px; height: 50px;">
-                                <i class="bi bi-calendar-check fs-5"></i>
-                            </div>
-
-                            <h3 class="h5 fw-bold">Complete Itinerary</h3>
-
-                            <p class="text-secondary small lh-lg mb-0">
-                                Receive a structured day-by-day
-                                itinerary generated specifically
-                                for your trip.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer border-top py-4">
-        <div class="container">
-            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
-                <div class="fw-bold">
-                    <i class="bi bi-compass text-primary me-1"></i>
-                    TripMate <span class="text-primary">AI</span>
-                </div>
-
-                <div class="small text-secondary">
-                    AI-powered travel planning
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-    <script src="/script.js"></script>
-</body>
-
+    <script src="/frontend/script.js" defer></script>
+  </body>
 </html>
