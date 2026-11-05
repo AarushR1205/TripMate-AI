@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "https://tripmate-ai-backend.onrender.com/";
+const API_BASE_URL = "https://tripmate-ai-backend.onrender.com";
 const MIN_PROMPT_LENGTH = 3;
 const MAX_PROMPT_LENGTH = 2000;
 const REQUEST_TIMEOUT = 120000;
@@ -24,7 +24,7 @@ async function apiRequest(endpoint, options = {}) {
   let response;
 
   try {
-    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    response = await fetch(new URL(endpoint, `${API_BASE_URL}/`), {
       ...options,
       signal: AbortSignal.timeout(REQUEST_TIMEOUT),
     });

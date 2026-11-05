@@ -1,5 +1,6 @@
 import uuid
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from backend import run_travel_agent
 
@@ -7,6 +8,14 @@ app = FastAPI(
     title="TripMate AI",
     description="AI-powered multi-agent travel planning application",
     version="1.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
 )
 
 class TravelRequest(BaseModel):
