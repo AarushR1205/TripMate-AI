@@ -1,21 +1,13 @@
-from pathlib import Path
 import uuid
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from backend import run_travel_agent
-
-BASE_DIR = Path(__file__).resolve().parent
-FRONTEND_DIR = BASE_DIR / "frontend"
 
 app = FastAPI(
     title="TripMate AI",
     description="AI-powered multi-agent travel planning application",
     version="1.0.0",
 )
-
-app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
 
 class TravelRequest(BaseModel):
     message: str = Field(..., min_length=3, max_length=8000, description="User travel request")
@@ -32,7 +24,10 @@ class TravelResponse(BaseModel):
 
 @app.get("/")
 def root():
-    return FileResponse(FRONTEND_DIR / "index.html")
+    return {
+        "message" : "FastAPI server is running!!!",
+        "status" : "OK"
+    }
 
 @app.get("/health")
 def health():
