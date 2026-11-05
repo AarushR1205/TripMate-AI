@@ -1,12 +1,8 @@
-from pathlib import Path
 import uuid
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from backend import run_travel_agent
-
-BASE_DIR = Path(__file__).resolve().parent
-FRONTEND_DIR = BASE_DIR / "frontend"
 
 app = FastAPI(
     title="TripMate AI",
@@ -65,12 +61,12 @@ def api_info():
     }
 
 
-@app.get("/api/new-session")
+@app.get("/api/chat")
 def new_session():
     thread_id = f"user_{uuid.uuid4().hex}"
     return {"thread_id": thread_id}
 
-@app.post("/api", response_model=TravelResponse)
+@app.post("/api/chat", response_model=TravelResponse)
 def travel_chat(request: TravelRequest):
     user_message = request.message.strip()
     if not user_message:

@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "http://127.0.0.1:8000";
 const MIN_PROMPT_LENGTH = 3;
 const MAX_PROMPT_LENGTH = 2000;
 const REQUEST_TIMEOUT = 30000;
@@ -66,7 +66,7 @@ async function startSession() {
   isStartingSession = true;
 
   try {
-    const data = await apiRequest("/api/new-session");
+    const data = await apiRequest("/api/chat");
 
     if (!data.thread_id || typeof data.thread_id !== "string") {
       throw new Error("Invalid session received from server.");

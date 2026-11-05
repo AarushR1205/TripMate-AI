@@ -5,10 +5,8 @@ from typing import TypedDict, Annotated
 import operator
 import uuid
 from langchain.messages import HumanMessage
-import psycopg
-from psycopg.rows import dict_row
 from langgraph.graph import StateGraph, START, END
-from langgraph.checkpoint.postgres import PostgresSaver
+from langgraph.checkpoint.memory import InMemorySaver
 from langchain_core.messages import AnyMessage, AIMessage
 from langchain_groq import ChatGroq
 from tools import tavily_search, search_flights
@@ -125,7 +123,6 @@ def final_response_node(state:TravelState)->dict:
     Return only the final travel response. """
 
     response = llm.invoke(final_prompt)
-    print(f"\n {response.content}")
     return {
         "messages" : [response],
         "llm_calls" : state.get("llm_calls", 0) + 1
@@ -144,18 +141,8 @@ graph.add_edge("hotel_agent","itinerary_agent")
 graph.add_edge("itinerary_agent", "final_response")
 graph.add_edge("final_response", END)
 
-DATABASE_URL = get_database_url()
-_conn = psycopg.connect(
-    DATABASE_URL,
-    autocommit=True,
-    row_factory=dict_row
-)
-
-checkpointer = PostgresSaver(_conn)
-checkpointer.setup()
-
+checkpointer = InMemorySaver()
 travel_graph = graph.compile(checkpointer=checkpointer)
-
 
 def run_travel_agent(user_input: str, thread_id: str | None=None):
     if not thread_id:
