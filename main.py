@@ -75,7 +75,7 @@ def new_session():
     thread_id = f"user_{uuid.uuid4().hex}"
     return {"thread_id": thread_id}
 
-@app.post("/api/chat", response_model=TravelResponse)
+@app.post("/api", response_model=TravelResponse)
 def travel_chat(request: TravelRequest):
     user_message = request.message.strip()
     if not user_message:
