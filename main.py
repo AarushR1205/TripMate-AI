@@ -24,12 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount(
-    "/frontend",
-    StaticFiles(directory=FRONTEND_DIR),
-    name="frontend"
-)
-
 class TravelRequest(BaseModel):
     message: str = Field(..., min_length=3, max_length=8000, description="User travel request")
     thread_id: str | None = Field(default=None, description="Existing LangGraph conversation thread ID",)
@@ -45,7 +39,10 @@ class TravelResponse(BaseModel):
 
 @app.get("/")
 def root():
-    return FileResponse(FRONTEND_DIR / "index.html")
+    return {
+        "message" : "FastAPI server is running!!!",
+        "status" : "OK"
+    }
 
 @app.get("/health")
 def health():
