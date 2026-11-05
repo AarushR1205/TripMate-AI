@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://tripmate-ai-backend.onrender.com/";
 const MIN_PROMPT_LENGTH = 3;
 const MAX_PROMPT_LENGTH = 2000;
 const REQUEST_TIMEOUT = 30000;
