@@ -20,7 +20,7 @@ This makes TripMate useful for both quick trip inspiration and more actionable p
 - Hotel and destination research with Tavily search
 - Location parsing for cities, countries, and IATA codes
 - Multi-agent workflow using LangGraph for flight, hotel, and itinerary steps
-- Persistent conversation threads via PostgreSQL-backed graph checkpointing
+- Conversation threads via in-memory graph checkpointing
 - Responsive frontend built with static HTML, JavaScript, and Tailwind CSS
 
 ## Tech Stack
@@ -29,7 +29,7 @@ This makes TripMate useful for both quick trip inspiration and more actionable p
 - FastAPI
 - LangGraph
 - LangChain + Groq integration
-- PostgreSQL for checkpoint persistence
+- Render web service for deployment
 - Tavily for travel research
 - AviationStack for live flight data
 - airportsdata and pycountry for airport and location resolution
@@ -37,8 +37,8 @@ This makes TripMate useful for both quick trip inspiration and more actionable p
 
 ## Project Structure
 
-- `backend.py` — FastAPI application and travel chat API
-- `main.py` — LangGraph orchestration and agent graph setup
+- `main.py` — FastAPI application, API routes, and frontend serving
+- `backend.py` — LangGraph orchestration and agent graph setup
 - `tools.py` — flight parsing, airport resolution, and external API helpers
 - `frontend/` — static web app and UI assets
 - `src/tripmate_ai/` — package entry point
@@ -48,8 +48,7 @@ This makes TripMate useful for both quick trip inspiration and more actionable p
 
 ### Prerequisites
 
-- Python 3.13 or newer
-- PostgreSQL database URL for LangGraph checkpointing
+- Python 3.14 or newer
 - API keys for Groq, Tavily, and AviationStack
 
 ### 1. Clone and install dependencies
@@ -73,25 +72,20 @@ uv sync
 Create a `.env` file in the project root with the following variables:
 
 ```env
-DATABASE_URL=your_postgres_connection_string
 GROQ_API_KEY=your_groq_api_key
 TAVILY_API_KEY=your_tavily_api_key
 AVIATIONSTACK_API_KEY=your_aviationstack_api_key
 DEFAULT_ORIGIN_IATA=IND
 ```
 
-Notes:
-
-- `DATABASE_URL` should point to a PostgreSQL instance that LangGraph can use for checkpoints.
-- If you're using a hosted Postgres service, ensure SSL is enabled as required by the provider.
-- `DEFAULT_ORIGIN_IATA` is used as the fallback origin airport for location-based flight searches.
+`DEFAULT_ORIGIN_IATA` is used as the fallback origin airport for location-based flight searches. A PostgreSQL database is not required: conversation state is stored in memory and is cleared when the service restarts.
 
 ### 3. Run the app
 
 Start the FastAPI server:
 
 ```bash
-uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 Then open:
@@ -101,6 +95,12 @@ http://localhost:8000
 ```
 
 The application serves the frontend at the root route and exposes the API under `/api`.
+
+### Deploy to Render
+
+1. Push this repository to GitHub and create a new **Blueprint** in Render from the repository. Render reads `render.yaml` to build and start the web service.
+2. Set `GROQ_API_KEY`, `TAVILY_API_KEY`, and `AVIATIONSTACK_API_KEY` in the service's environment settings.
+3. Deploy. The health check is available at `/health`; the web app and API are served from the same origin.
 
 ## API
 
@@ -158,7 +158,7 @@ The backend uses a stateful graph workflow:
 3. Hotel research is fetched via Tavily.
 4. The itinerary agent composes a practical plan using flight and hotel context.
 5. A final response node creates a polished markdown output.
-6. LangGraph checkpoints the conversation state in Postgres.
+6. LangGraph checkpoints the conversation state in memory.
 
 ## Notes
 

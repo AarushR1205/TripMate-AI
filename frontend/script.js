@@ -2,7 +2,7 @@
 const API_BASE_URL = "https://tripmate-ai-backend.onrender.com/";
 const MIN_PROMPT_LENGTH = 3;
 const MAX_PROMPT_LENGTH = 2000;
-const REQUEST_TIMEOUT = 30000;
+const REQUEST_TIMEOUT = 120000;
 
 // DOM Elements
 const form = document.querySelector("#travel-form");
@@ -66,7 +66,7 @@ async function startSession() {
   isStartingSession = true;
 
   try {
-    const data = await apiRequest("/api/chat");
+    const data = await apiRequest("/api/new-session");
 
     if (!data.thread_id || typeof data.thread_id !== "string") {
       throw new Error("Invalid session received from server.");

@@ -146,7 +146,7 @@ travel_graph = graph.compile(checkpointer=checkpointer)
 
 def run_travel_agent(user_input: str, thread_id: str | None=None):
     if not thread_id:
-        thread_id = f"user_{uuid.uuid4().hex()}"
+        thread_id = f"user_{uuid.uuid4().hex}"
 
     config = {"configurable" : {"thread_id" : thread_id}}
     
@@ -170,7 +170,6 @@ def run_travel_agent(user_input: str, thread_id: str | None=None):
         "itinerary": result.get("itinerary", ""),
         "llm_calls": result.get("llm_calls", 0)
     }
-
 
 
 

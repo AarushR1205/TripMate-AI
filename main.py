@@ -1,8 +1,13 @@
+from pathlib import Path
 import uuid
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from backend import run_travel_agent
+
+BASE_DIR = Path(__file__).resolve().parent
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 app = FastAPI(
     title="TripMate AI",
@@ -10,13 +15,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
 
 class TravelRequest(BaseModel):
     message: str = Field(..., min_length=3, max_length=8000, description="User travel request")
@@ -33,10 +32,7 @@ class TravelResponse(BaseModel):
 
 @app.get("/")
 def root():
-    return {
-        "message" : "FastAPI server is running!!!",
-        "status" : "OK"
-    }
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 @app.get("/health")
 def health():
@@ -61,7 +57,7 @@ def api_info():
     }
 
 
-@app.get("/api/chat")
+@app.get("/api/new-session")
 def new_session():
     thread_id = f"user_{uuid.uuid4().hex}"
     return {"thread_id": thread_id}
